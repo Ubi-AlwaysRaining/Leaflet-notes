@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<title>Leaflet — Notes & Plans</title>
+<meta name="theme-color" content="#24312B" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icon-192.png" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Fonts users can pick for writing notes -->
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Special+Elite&family=Space+Mono&family=Playfair+Display:wght@500;700&family=Nunito:wght@400;700&family=Work+Sans:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ============ HOME ============ -->
+  <header id="home-header">
+    <div id="crumb-row">
+      <button id="btn-back-folder" class="icon-btn hidden" aria-label="Back">
+        <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <input id="crumb-title" class="crumb-input" readonly value="Leaflet" />
+    </div>
+    <div style="display:flex;align-items:center;">
+      <button id="btn-folder-cover" class="icon-btn hidden" aria-label="Folder cover">
+        <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </button>
+      <button id="btn-folder-delete" class="icon-btn danger hidden" aria-label="Delete folder">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m-8 0l1 12a1 1 0 001 1h6a1 1 0 001-1l1-12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button id="btn-settings" class="icon-btn" aria-label="Settings">
+        <svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 13a7.4 7.4 0 000-2l2-1.5-2-3.4-2.3.9a7.6 7.6 0 00-1.7-1L15 3.6h-4l-.4 2.4a7.6 7.6 0 00-1.7 1l-2.3-.9-2 3.4L6.6 11a7.4 7.4 0 000 2l-2 1.5 2 3.4 2.3-.9c.5.4 1.1.75 1.7 1L11 20.4h4l.4-2.4c.6-.25 1.2-.6 1.7-1l2.3.9 2-3.4-2-1.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="home-grid"></main>
+
+  <p id="empty-state" class="hidden">Nothing here yet. Tap <strong>+</strong> to add your first note or folder.</p>
+
+  <!-- Floating action button -->
+  <div id="fab-wrap">
+    <div id="fab-menu" class="hidden">
+      <button class="fab-option" data-action="new-planning"><span class="fab-ic">🗓</span> Daily plan</button>
+      <button class="fab-option" data-action="new-writing"><span class="fab-ic">✎</span> Writing note</button>
+      <button class="fab-option" data-action="new-folder"><span class="fab-ic">🗂</span> New folder</button>
+    </div>
+    <button id="fab-main" aria-label="Add">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <!-- ============ NOTE EDITOR ============ -->
+  <section id="editor" class="screen hidden">
+    <header class="editor-header">
+      <button class="icon-btn" id="btn-editor-close" aria-label="Close">
+        <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <input id="note-title" class="title-input" placeholder="Untitled" />
+      <button class="icon-btn" id="btn-editor-design" aria-label="Design">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="8" r="1.4" fill="currentColor"/><circle cx="8.5" cy="13" r="1.4" fill="currentColor"/><circle cx="15.5" cy="13" r="1.4" fill="currentColor"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-editor-move" aria-label="Move to folder">
+        <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="icon-btn danger" id="btn-editor-delete" aria-label="Delete">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m-8 0l1 12a1 1 0 001 1h6a1 1 0 001-1l1-12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </header>
+
+    <div id="editor-body">
+      <!-- Writing note body -->
+      <div id="writing-body" class="hidden">
+        <div id="font-color-row">
+          <select id="font-select"></select>
+          <input type="color" id="text-color-input" value="#24312B" title="Text color" />
+        </div>
+        <textarea id="writing-textarea" placeholder="Start writing…"></textarea>
+      </div>
+
+      <!-- Planning note body -->
+      <div id="planning-body" class="hidden">
+        <ul id="plan-list"></ul>
+        <form id="plan-add-form">
+          <input type="text" id="plan-text-input" placeholder="Add a plan…" required />
+          <input type="time" id="plan-time-input" />
+          <button type="submit" class="add-plan-btn" aria-label="Add plan">+</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DESIGN SHEET ============ -->
+  <div id="sheet-backdrop" class="hidden"></div>
+  <section id="design-sheet" class="sheet hidden">
+    <div class="sheet-handle"></div>
+    <h2>Design</h2>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="colors">Colors</button>
+      <button class="tab-btn" data-tab="patterns">Patterns</button>
+      <button class="tab-btn" data-tab="photo">Your photo</button>
+    </div>
+    <div id="tab-colors" class="tab-pane">
+      <div id="color-swatches" class="swatch-grid"></div>
+    </div>
+    <div id="tab-patterns" class="tab-pane hidden">
+      <div id="pattern-swatches" class="swatch-grid"></div>
+    </div>
+    <div id="tab-photo" class="tab-pane hidden">
+      <label class="upload-btn">
+        Choose photo from device
+        <input type="file" id="photo-input" accept="image/*" />
+      </label>
+      <button id="photo-remove" class="text-btn hidden">Remove photo background</button>
+    </div>
+    <button id="sheet-done" class="primary-btn">Done</button>
+  </section>
+
+  <!-- ============ MOVE TO FOLDER SHEET ============ -->
+  <section id="move-sheet" class="sheet hidden">
+    <div class="sheet-handle"></div>
+    <h2>Move to folder</h2>
+    <div id="move-list" class="move-list"></div>
+  </section>
+
+  <!-- ============ SETTINGS ============ -->
+  <section id="settings" class="screen hidden">
+    <header class="editor-header">
+      <button class="icon-btn" id="btn-settings-close" aria-label="Close">
+        <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <h2>Settings</h2>
+      <span style="width:40px"></span>
+    </header>
+    <div id="settings-body">
+      <div class="settings-row">
+        <div>
+          <strong>Reminders</strong>
+          <p class="hint">Get notified 10 minutes before each planned item's time.</p>
+        </div>
+        <button id="btn-notif-toggle" class="primary-btn small">Enable</button>
+      </div>
+      <p id="notif-status" class="hint"></p>
+      <div class="settings-row" style="margin-top:28px;">
+        <div>
+          <strong>Install Leaflet</strong>
+          <p class="hint">Add this to your home screen so it opens like a real app.</p>
+        </div>
+      </div>
+      <p class="hint" id="install-hint">On Android Chrome: menu ⋮ → "Add to Home screen". On iPhone Safari: Share → "Add to Home Screen".</p>
+    </div>
+  </section>
+
+</div>
+
+<div id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
